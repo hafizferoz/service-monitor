@@ -1,0 +1,50 @@
+<h1 class="center-text">Service Monitoring Dashboard</h1>
+<div>
+  <h2>Monitor Services</h2>
+  <form #serviceDataForm="ngForm">
+    
+    <label>
+      Application Name:
+      <input type="text" name="appName" [(ngModel)]="appName" required>
+    </label>
+    <br><br>
+    <label>
+      Service URL:
+      <input type="text" name="serviceUrl" [(ngModel)]="serviceUrl" required>
+    </label>
+    <br><br>
+    <button type="submit" (click)="addServiceData()">Add Service Data</button>
+  </form>
+</div>
+<br><br>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>URL</th>
+      <th>Status</th>
+      <th>Last Up Time</th>
+      <th>Last Down Time</th>
+      <th>Up Time</th>
+      <th>Down Time</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let service of services">
+      <td>{{ service.name }}</td>
+      <td>{{ service.url }}</td>
+      <td [ngClass]="{'status-up': service.status == 'UP', 'status-down': service.status == 'DOWN'}">{{ service.status }}</td>
+      <td>{{ service.startTime | date:'medium' }}</td>
+      <td>{{ service.stopTime ? (service.stopTime | date:'medium') : '' }}</td>
+      <td *ngIf="service.upTime">{{ service.upTime }}</td>
+      <td *ngIf="!service.upTime">N/A</td>
+      <td *ngIf="service.downTime">{{ service.downTime }}</td>
+      <td *ngIf="!service.downTime">N/A</td>
+      <td>
+        <button [disabled]="service.status === 'UP'" (click)="startService(service.url)">Start</button>
+        <button [disabled]="service.status === 'DOWN'" (click)="stopService(service.url)">Stop</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
