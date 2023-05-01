@@ -18,13 +18,6 @@ export class AppComponent {
   startUrl: string;
   stopUrl: string;
 
-  // constructor(private http: HttpClient) {
-  //   this.monitorService('http://localhost:8080/app1', 'App 1');
-  //   this.monitorService('http://localhost:8081/app2', 'App 2');
-  //   this.monitorService('http://localhost:8082/app3', 'App 3');
-  //   this.monitorService('http://localhost:8083/app4', 'App 4');
-  //   this.monitorService('http://localhost:8084/app5', 'App 5');
-  // }
 
   constructor(private http: HttpClient, private serviceDataService: ServiceDataService) {
     this.loadServiceData();
