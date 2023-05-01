@@ -2,27 +2,37 @@
 <div>
   <h2>Monitor Services</h2>
   <form #serviceDataForm="ngForm">
-    
+   <tr style="background-color: #f2f2f2;"> <td>
     <label>
       Application Name:
       <input type="text" name="appName" [(ngModel)]="appName" required>
     </label>
+  </td>
     <br><br>
+    <td>
     <label>
       Service URL:
       <input type="text" name="serviceUrl" [(ngModel)]="serviceUrl" required>
     </label>
-    <br><br>
+  </td>
+    <br>
+  </tr>
+  <tr>
+    <td>
     <label>
       Start URL:
       <input type="text" name="serviceDomain" [(ngModel)]="startUrl" required>
     </label>
-    <br><br>
+  </td>
+    <br>
+    <td>
     <label>
       Stop URL:
       <input type="text" name="serviceDomain" [(ngModel)]="stopUrl" required>
     </label>
-    <br><br>
+  </td>
+</tr>
+    <br>
     <button type="submit" (click)="addServiceData()">Add Service Data</button>
   </form>
 </div>
