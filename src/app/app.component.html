@@ -13,6 +13,16 @@
       <input type="text" name="serviceUrl" [(ngModel)]="serviceUrl" required>
     </label>
     <br><br>
+    <label>
+      Start URL:
+      <input type="text" name="serviceDomain" [(ngModel)]="startUrl" required>
+    </label>
+    <br><br>
+    <label>
+      Stop URL:
+      <input type="text" name="serviceDomain" [(ngModel)]="stopUrl" required>
+    </label>
+    <br><br>
     <button type="submit" (click)="addServiceData()">Add Service Data</button>
   </form>
 </div>

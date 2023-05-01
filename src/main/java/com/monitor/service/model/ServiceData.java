@@ -33,6 +33,12 @@ public class ServiceData implements Serializable {
     
     @Column(name = "service_url")
     private String url;
+    
+    @Column(name = "start_url")
+    private String startUrl;
+    
+    @Column(name = "stop_url")
+    private String stopUrl;
 
     @Column(name = "service_status")
     private String status;

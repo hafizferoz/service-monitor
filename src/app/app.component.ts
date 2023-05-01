@@ -15,9 +15,11 @@ export class AppComponent {
   appName: string;
   title = 'angular-control-app';
   services: any = [];
+  startUrl: string;
+  stopUrl: string;
 
   // constructor(private http: HttpClient) {
-  //   this.monitorService('http://localhost:8080/edi-etpws-v2', 'App 1');
+  //   this.monitorService('http://localhost:8080/app1', 'App 1');
   //   this.monitorService('http://localhost:8081/app2', 'App 2');
   //   this.monitorService('http://localhost:8082/app3', 'App 3');
   //   this.monitorService('http://localhost:8083/app4', 'App 4');
@@ -40,7 +42,7 @@ export class AppComponent {
     const url = serviceData.url;
     const name = serviceData.name;
     interval(5000).subscribe(() => {
-      this.http.get<any>(`${url}/actuator/health`).subscribe(data => {
+      this.http.get<any>(`${url}`).subscribe(data => {
         const status = data.status;
         const dateTime = new Date();
         const service = this.services.find(s => s.url === url);
@@ -116,14 +118,14 @@ export class AppComponent {
   }
   
 
-  startService(url: string) {
-    this.http.post<any>(`${url}/actuator/startup`, {}).subscribe(data => {
+  startService(startUrl: string) {
+    this.http.post<any>(`${startUrl}`, {}).subscribe(data => {
       console.log(data);
     });
   }
 
-  stopService(url: string) {
-    this.http.post<any>(`${url}/actuator/shutdown`, {}).subscribe(data => {
+  stopService(stopUrl: string) {
+    this.http.post<any>(`${stopUrl}`, {}).subscribe(data => {
       console.log(data);
     });
   }
@@ -131,6 +133,8 @@ export class AppComponent {
   addServiceData() {
     const data: ServiceData = new ServiceData();
     data.url = this.serviceUrl;
+    data.startUrl=this.startUrl;
+    data.stopUrl=this.stopUrl;
     data.name = this.appName;
     this.serviceDataService.updateServiceData(data);
     this.loadServiceData();

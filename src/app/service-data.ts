@@ -3,6 +3,8 @@ export class ServiceData {
     name: string;
     status: string;
     url:string;
+    startUrl: string;
+    stopUrl: string;
     startTime:string;
     stopTime:string;
     upTime:string;
