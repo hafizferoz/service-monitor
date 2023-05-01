@@ -3,7 +3,7 @@
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.15 and spring boot version 2.7.11.
 The project monitors application status on a dashboard. Add applications to the existing monitor to check the health of the application UP/DOWN and DOWN TIME/UP TIME etc. The application must have actuator dependecy installed.
 
-![alt text](https://github.com/hafizferoz/service-monitor/blob/master/dashboard.JPG)
+![alt text](https://github.com/hafizferoz/service-monitor/blob/master/dashboard.PNG)
 
 ## Development server
 
