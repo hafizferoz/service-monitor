@@ -52,8 +52,8 @@
       <td *ngIf="service.downTime">{{ service.downTime }}</td>
       <td *ngIf="!service.downTime">N/A</td>
       <td>
-        <button [disabled]="service.status === 'UP'" (click)="startService(service.url)">Start</button>
-        <button [disabled]="service.status === 'DOWN'" (click)="stopService(service.url)">Stop</button>
+        <button [disabled]="service.status === 'UP'" (click)="startService(service.startUrl)">Start</button>
+        <button [disabled]="service.status === 'DOWN'" (click)="stopService(service.stopUrl)">Stop</button>
       </td>
     </tr>
   </tbody>

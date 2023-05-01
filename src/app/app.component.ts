@@ -33,6 +33,8 @@ export class AppComponent {
 
   monitorService(serviceData: ServiceData) {
     const url = serviceData.url;
+    const startUrl = serviceData.startUrl;
+    const stopUrl = serviceData.stopUrl;
     const name = serviceData.name;
     interval(5000).subscribe(() => {
       this.http.get<any>(`${url}`).subscribe(data => {
@@ -44,6 +46,8 @@ export class AppComponent {
           this.services.push({
             name,
             url,
+            startUrl,
+            stopUrl,
             status,
             startTime: dateTime,
             stopTime: null,
@@ -82,6 +86,8 @@ export class AppComponent {
           this.services.push({
             name,
             url,
+            startUrl,
+            stopUrl,
             status,
             startTime: dateTime,
             stopTime: null,
