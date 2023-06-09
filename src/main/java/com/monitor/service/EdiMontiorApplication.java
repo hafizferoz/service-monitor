@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 public class EdiMontiorApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("java.io.tmpdir", "/tmp");
 		SpringApplication.run(EdiMontiorApplication.class, args);
 	}
 
