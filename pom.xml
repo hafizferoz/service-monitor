@@ -8,7 +8,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.monitor.service</groupId>
-	<artifactId>service-montior</artifactId>
+	<artifactId>service-monitor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>service-montior</name>
 	<description>Demo project for Spring Boot</description>
