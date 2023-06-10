@@ -37,7 +37,8 @@ export class AppComponent {
     const stopUrl = serviceData.stopUrl;
     const name = serviceData.name;
     interval(5000).subscribe(() => {
-      this.http.get<any>(`${url}`).subscribe(data => {
+     // this.http.get<any>(`${url}`).subscribe(data => {
+      this.serviceDataService.getServiceDetails(serviceData).subscribe(data =>{
         const status = data.status;
         const dateTime = new Date();
         const service = this.services.find(s => s.url === url);
