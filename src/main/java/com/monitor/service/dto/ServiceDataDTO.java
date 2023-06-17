@@ -3,6 +3,8 @@ package com.monitor.service.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -29,13 +31,15 @@ public class ServiceDataDTO implements Serializable {
 
     private String status;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private LocalDateTime stopTime;
 
-    private Long upTime;
+    private String upTime;
 
-    private Long downTime;
+    private String downTime;
 
 }
 

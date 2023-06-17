@@ -50,10 +50,10 @@ public class ServiceData implements Serializable {
     private LocalDateTime stopTime;
 
     @Column(name = "up_time")
-    private Long upTime;
+    private String upTime;
 
     @Column(name = "down_time")
-    private Long downTime;
+    private String downTime;
 
 }
 

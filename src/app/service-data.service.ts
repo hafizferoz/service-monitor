@@ -8,7 +8,8 @@ import { ServiceDetails } from './service-details';
   providedIn: 'root'
 })
 export class ServiceDataService {
-  private serviceDataUrl = '/service-data'; // URL to Spring Boot backend
+ 
+  private serviceDataUrl = '/servicedata'; // URL to Spring Boot backend
   private serviceDataSubject = new BehaviorSubject<ServiceData[]>([]);
   public serviceData$ = this.serviceDataSubject.asObservable();
 
@@ -19,13 +20,25 @@ export class ServiceDataService {
   private loadServiceData() {
     this.http.get<ServiceData[]>(this.serviceDataUrl + '/load').subscribe(data => {
       this.serviceDataSubject.next(data);
-      console.log(data);
+      console.log("data:", data);
+    }, error => {
+      console.log("Error loading service data: " + error.message);
+    });
+  }
+
+  public addServiceData(serviceData: ServiceData) {
+    this.http.post<ServiceData>(this.serviceDataUrl + '/add', serviceData).subscribe(() => {
+      this.loadServiceData();
+    }, error => {
+      console.log("Error adding service data: " + error.message);
     });
   }
 
   public updateServiceData(serviceData: ServiceData) {
     this.http.post<ServiceData>(this.serviceDataUrl + '/update', serviceData).subscribe(() => {
       this.loadServiceData();
+    }, error => {
+      console.log("Error updating service data: " + error.message);
     });
   }
 
@@ -35,6 +48,15 @@ export class ServiceDataService {
     //   console.log(data);
     //   return data;
     // });
+  }
+  public removeServiceData(serviceData: ServiceData) {
+    this.http.post(this.serviceDataUrl + '/remove', serviceData).subscribe(() => {
+      console.log("removed:" + serviceData.id);
+      this.loadServiceData();
+    },
+    error => {
+      console.log("Error removing service: " + error.message);
+    });
   }
 }
 

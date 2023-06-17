@@ -5,6 +5,7 @@ import { ServiceDataService } from './service-data.service';
 import { ServiceData } from './service-data';
 import { FormsModule } from '@angular/forms';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -17,6 +18,7 @@ export class AppComponent {
   services: any = [];
   startUrl: string;
   stopUrl: string;
+  dateFormat:string = 'dd/MM/yyyy HH:mm:ss';
 
 
   constructor(private http: HttpClient, private serviceDataService: ServiceDataService) {
@@ -26,92 +28,118 @@ export class AppComponent {
   private loadServiceData() {
     this.serviceDataService.serviceData$.subscribe(serviceDataList => {
       serviceDataList.forEach(serviceData => {
+        console.log("servicedata: ", serviceData);
         this.monitorService(serviceData);
       });
     });
   }
 
   monitorService(serviceData: ServiceData) {
+    const id = serviceData.id;
     const url = serviceData.url;
     const startUrl = serviceData.startUrl;
     const stopUrl = serviceData.stopUrl;
     const name = serviceData.name;
-    interval(5000).subscribe(() => {
+    const startTime = serviceData.startTime;
+    const stopTime = serviceData.stopTime;
+    const upTime = serviceData.upTime;
+    const downTime = serviceData.downTime;
+    const subscription = interval(15000).subscribe(() => {
      // this.http.get<any>(`${url}`).subscribe(data => {
       this.serviceDataService.getServiceDetails(serviceData).subscribe(data =>{
         const status = data.status;
         const dateTime = new Date();
         const service = this.services.find(s => s.url === url);
-  
+        // if(startTime===null)
+        //         startTime=dateTime;
         if (!service) {
           this.services.push({
+            id,
             name,
             url,
             startUrl,
             stopUrl,
             status,
-            startTime: dateTime,
-            stopTime: null,
-            upTime: null,
-            downTime: null
+            startTime,
+            stopTime,
+            upTime,
+            downTime,
+            subscription
           });
+         
         } else {
           if (service.status !== status) {
             if (status === 'UP') {
               if (service.stopTime) {
-                service.upTime = this.getTimeDiff(service.startTime, dateTime);
+                service.upTime = this.getTimeDiff(new Date(service.startTime), dateTime);
                 service.startTime = dateTime;
                 service.stopTime = null;
               } else {
-                service.upTime = this.getTimeDiff(service.startTime, dateTime);
+                service.upTime = this.getTimeDiff(new Date(service.startTime), dateTime);
               }
             } else {
               if (service.stopTime) {
-                service.downTime = this.getTimeDiff(service.startTime, dateTime);
+                service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
               } else {
-                service.downTime = this.getTimeDiff(service.startTime, dateTime);
-                service.stopTime = dateTime;
+                service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
+                service.stopTime = dateTime.toISOString();
               }
             }
+           
           }
           service.status = status;
+          this.updateServiceData(service);
         }
       },
       error => {
         console.log(`Error monitoring ${name}: ${error.message}`);
         const status = "DOWN";
         const dateTime = new Date();
-        const service = this.services.find(service => service.url === url);
-  
+        const service = this.services.find(s => s.url === url);
+        // if(startTime===null)
+        //     startTime=dateTime;
         if (!service) {
           this.services.push({
+            id,
             name,
             url,
             startUrl,
             stopUrl,
             status,
-            startTime: dateTime,
-            stopTime: null,
-            upTime: null,
-            downTime: null
+            startTime,
+            stopTime,
+            upTime,
+            downTime,
+            subscription
           });
+         
         } else {
           if (service.status === status) {
             if (service.stopTime) {
-              service.downTime = this.getTimeDiff(service.startTime, dateTime);
+              service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
             } else {
-              service.downTime = this.getTimeDiff(service.startTime, dateTime);
-              service.stopTime = dateTime;
+              service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
+              service.stopTime = dateTime.toISOString();
             }
+          
          }
           service.status = status;
+          this.updateServiceData(service);
         }
       });
+      
+
+    // const index = this.services.findIndex(s => s.url === url);
+    // if (index === -1 && !service) {
+    //   subscription.unsubscribe();
+    // }
     });
   }
   
   
   getTimeDiff(start: Date, end: Date): string {
+    console.log("start:"+ start);
+    console.log("end:"+ end);
     const diffInMs = Math.abs(end.getTime() - start.getTime());
     const diffInHours = Math.ceil(diffInMs / (1000 * 60 * 60));
     return `${diffInHours} hour(s)`;
@@ -129,15 +157,58 @@ export class AppComponent {
       console.log(data);
     });
   }
+  removeService(serviceId: number){
+    const data: ServiceData = new ServiceData();
+    data.id=serviceId;
+    const index = this.services.findIndex((s: any) => s.id === serviceId);
+    const service = this.services.find(s => s.id === serviceId);
+      // Remove the 'service' object from the array
+      if (index !== -1) {
+        // Unsubscribe from the interval when the service is removed
+        console.log("service removed: ",service);
+        service.subscription.unsubscribe();
+        this.services.splice(index, 1);
+      }
+      this.serviceDataService.removeServiceData(data);
+     // this.loadServiceData();
+  }
 
   addServiceData() {
+    if(this.serviceUrl===null || this.appName===null){
+      alert("Service Name and URL is required");
+      return;
+    }
+    const service = this.services.find(s => s.url === this.serviceUrl);
+    if(!service){
     const data: ServiceData = new ServiceData();
     data.url = this.serviceUrl;
     data.startUrl=this.startUrl;
     data.stopUrl=this.stopUrl;
     data.name = this.appName;
+    data.startTime= new Date().toISOString();
+   
+    this.serviceDataService.addServiceData(data);
+   // this.loadServiceData();
+    
+    }
+    else {
+      alert("Service url " + this.serviceUrl +" already exists");
+    }
+
+  }
+  updateServiceData(service: any) {
+    const data: ServiceData = new ServiceData();
+    data.url = service.url;
+    data.startUrl=service.startUrl;
+    data.stopUrl=service.stopUrl;
+    data.name = service.name;
+    data.startTime = service.startTime;
+    data.stopTime = service.stopTime;
+    data.downTime=service.downTime;
+    data.status = service.status;
+    data.upTime = service.upTime;
+    data.id=service.id;
     this.serviceDataService.updateServiceData(data);
-    this.loadServiceData();
 
   }
 }
