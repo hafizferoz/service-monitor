@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+ <style>
+
+	table {
+
+	  border: 2px solid black;
+	  width: 80%;
+	  height: 50px;
+	  text-align: center;
+	  border-collapse: collapse;
+	  
+	}
+	
+	td {
+	
+	   border: 1px solid black;
+	   border-bottom: 2px solid black; 
+	   vertical-align: center;
+	   color: #FF0000;
+	   font: bold 20px/25px Arial, serif;
+	}
+	
+	th{
+	
+	   border: 1px solid black;
+	   background-color: #D9D9D9;
+	   color: #870050;
+	   font: bold 20px/30px Arial, serif; 
+	}
+
+</style> 
+</head>
+<body>
+
+<p>Dear <span th:text="${name}"></span>,</p>
+	<p>
+		Please be informed that the <b>following Services are down:</b>
+	</p>
+	<br />
+	<br />
+
+
+	 <table>
+		<tr>
+			<th>No.</th>
+			<th>Service Name</th>
+			<th>Service Status</th>
+			<th>Last Up Time</th>
+			<th>Last Down Time</th>
+			<th>Up Time</th>
+			<th>Down Time</th>
+		</tr>
+		<tr th:each="service, serviceStat : ${serviceList}">
+			<td th:text="${serviceStat.count}"></td>
+			<td th:text="${service.name}"></td>
+			<td th:text="${service.status}"></td>
+			<td th:text="${service.startTime}"></td>
+			<td th:text="${service.stopTime}"></td>
+			<td th:text="${service.upTime}"></td>
+			<td th:text="${service.downTime}"></td>
+		</tr>
+	</table> 
+<br/><br/>
+<p>Thank you.</p>
+<br/>
+<p>SERVICE MONITOR</p>
+<p><b>"${companyName}"</b></p>
+<p>(Email Auto-generated)</p>
+</body>
+</html>

@@ -20,6 +20,7 @@ import com.monitor.service.dto.ServiceDataDTO;
 import com.monitor.service.dto.ServiceResponse;
 import com.monitor.service.model.ServiceData;
 import com.monitor.service.repository.ServiceRepository;
+import com.monitor.service.service.EmailService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +37,9 @@ public class ServiceDataController {
     
     @Autowired
     private RestTemplate restTemplate;
+    
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/load")
     public List<ServiceDataDTO> getServiceData() {
@@ -96,6 +100,11 @@ public class ServiceDataController {
 		log.info("remove: {}",dto);
     }
     
+    @PostMapping("/sendEmail")
+    public void sendEmail(@RequestBody List<ServiceDataDTO> dtoList) {
+		log.info("sendEmail: {}",dtoList);
+		emailService.sendEmail(dtoList);
+    }
 
 }
 
