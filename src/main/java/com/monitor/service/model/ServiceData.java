@@ -54,6 +54,9 @@ public class ServiceData implements Serializable {
 
     @Column(name = "down_time")
     private String downTime;
+    
+    @Column(name ="email_send_time")
+    private LocalDateTime emailSendTime;
 
 }
 

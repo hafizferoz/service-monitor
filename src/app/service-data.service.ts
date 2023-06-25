@@ -22,6 +22,7 @@ export class ServiceDataService {
       this.serviceDataSubject.next(data);
       console.log("data:", data);
     }, error => {
+      this.serviceDataSubject.next(null);
       console.log("Error loading service data: " + error.message);
     });
   }
@@ -58,5 +59,33 @@ export class ServiceDataService {
       console.log("Error removing service: " + error.message);
     });
   }
+
+  public sendEmail(serviceList: any[]) {
+    const downServices = serviceList.filter(service => service.status === 'DOWN');
+    
+    if (downServices.length > 0) {
+      const serviceDataList: ServiceData[] = downServices.map(service => {
+        const serviceData:ServiceData = {
+          id: service.id,
+          name: service.name,
+          status: service.status,
+          url: service.url,
+          startUrl: service.startUrl,
+          stopUrl: service.stopUrl,
+          startTime: service.startTime,
+          stopTime: service.stopTime,
+          upTime: service.upTime,
+          downTime: service.downTime
+        };
+        return serviceData;
+      });
+      this.http.post<void>(`${this.serviceDataUrl}/sendEmail`, serviceDataList).subscribe(() => {
+        console.log('Email sent successfully.');
+      }, error => {
+        console.log('Error sending email:', error);
+      });
+    }
+  }
+
 }
 

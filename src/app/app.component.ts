@@ -27,6 +27,8 @@ export class AppComponent {
   
   private loadServiceData() {
     this.serviceDataService.serviceData$.subscribe(serviceDataList => {
+      if(serviceDataList.length==0)
+          this.services = [];
       serviceDataList.forEach(serviceData => {
         console.log("servicedata: ", serviceData);
         this.monitorService(serviceData);
@@ -44,7 +46,7 @@ export class AppComponent {
     const stopTime = serviceData.stopTime;
     const upTime = serviceData.upTime;
     const downTime = serviceData.downTime;
-    const subscription = interval(15000).subscribe(() => {
+    const subscription = interval(30000).subscribe(() => {
      // this.http.get<any>(`${url}`).subscribe(data => {
       this.serviceDataService.getServiceDetails(serviceData).subscribe(data =>{
         const status = data.status;
@@ -84,6 +86,7 @@ export class AppComponent {
                 service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
                 service.stopTime = dateTime.toISOString();
               }
+              this.serviceDataService.sendEmail(this.services);
             }
            
           }
@@ -121,7 +124,7 @@ export class AppComponent {
               service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
               service.stopTime = dateTime.toISOString();
             }
-          
+            this.serviceDataService.sendEmail(this.services);
          }
           service.status = status;
           this.updateServiceData(service);

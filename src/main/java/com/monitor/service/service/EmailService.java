@@ -1,7 +1,13 @@
 package com.monitor.service.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +16,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import com.monitor.service.dto.ServiceDataDTO;
+import com.monitor.service.model.ServiceData;
+import com.monitor.service.repository.ServiceRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,18 +42,19 @@ public class EmailService {
 
 	private String emailContent = null;
 
+	@Autowired
+	@Qualifier("emailTemplateEngine")
 	private TemplateEngine emailTemplateEngine;
+	
+	@Autowired
 	private SendGridEmailService sendGridEmailService;
-
+	
 	@Autowired
-	public void setSendGridEmailService(SendGridEmailService sendGridEmailService) {
-		this.sendGridEmailService = sendGridEmailService;
-	}
+	private ModelMapper mapper;
+	
+	 @Autowired
+	private ServiceRepository serviceRepository;
 
-	@Autowired
-	public void setEmailTemplateEngine(@Qualifier("emailTemplateEngine") TemplateEngine emailTemplateEngine) {
-		this.emailTemplateEngine = emailTemplateEngine;
-	}
 
 	public String prepareAndSendSendGridEmail(String recipient, String subject, Context context, String templateName) {
 		try {
@@ -73,7 +82,10 @@ public class EmailService {
 	}
 
 	public void sendEmail(List<ServiceDataDTO> serviceList) {
-
+		 TypeToken<List<ServiceData>> serviceDataTypeToken = new TypeToken<List<ServiceData>>() {};
+		List<ServiceData> serviceDataList = mapper.map(serviceList, serviceDataTypeToken.getType());
+		serviceDataList = filterServiceData(serviceDataList);
+		if(!serviceDataList.isEmpty()) {
 		String emailContent = null;
 		String mailSubject = null;
 		String recipient = recieverEmail;
@@ -87,7 +99,35 @@ public class EmailService {
 		emailContent = prepareAndSendSendGridEmail(recipient, mailSubject, context,
 				EmailTemplate.MAIL_TEMPLATE.getValue());
 		log.info("emailContent:" + emailContent);
+		}
 
 	}
+	
+	public List<ServiceData> filterServiceData(List<ServiceData> serviceDataList) {
+        LocalDateTime currentTime = LocalDateTime.now();
 
+        return serviceDataList.stream()
+                .filter(serviceData -> {
+                	Optional<ServiceData> serviceDataOpt = serviceRepository.findById(serviceData.getId());
+					if (serviceDataOpt.isPresent()) {
+						ServiceData serviceDataDB = serviceDataOpt.get();
+						if (serviceDataDB.getEmailSendTime() != null) {
+							LocalDateTime emailSendTime = serviceDataDB.getEmailSendTime();
+							Duration duration = Duration.between(emailSendTime, currentTime);
+							if (duration.toMinutes() > 15) {
+								serviceDataDB.setEmailSendTime(currentTime);
+								serviceRepository.save(serviceDataDB);
+								return true;
+							}
+							return false;
+						}
+						serviceData.setEmailSendTime(currentTime);
+						serviceRepository.save(serviceData);
+						return true;
+					}
+                    return false;
+                   
+                })
+                .collect(Collectors.toList());
+    }
 }
