@@ -46,7 +46,7 @@ export class AppComponent {
     const stopTime = serviceData.stopTime;
     const upTime = serviceData.upTime;
     const downTime = serviceData.downTime;
-    const subscription = interval(30000).subscribe(() => {
+    const subscription = interval(15000).subscribe(() => {
      // this.http.get<any>(`${url}`).subscribe(data => {
       this.serviceDataService.getServiceDetails(serviceData).subscribe(data =>{
         const status = data.status;
@@ -55,7 +55,7 @@ export class AppComponent {
         // if(startTime===null)
         //         startTime=dateTime;
         if (!service) {
-          this.services.push({
+       const serve =   {
             id,
             name,
             url,
@@ -67,8 +67,9 @@ export class AppComponent {
             upTime,
             downTime,
             subscription
-          });
-         
+          };
+          this.services.push(serve);
+          this.updateServiceData(serve);
         } else {
           if (service.status !== status) {
             if (status === 'UP') {
@@ -88,10 +89,10 @@ export class AppComponent {
               }
               this.serviceDataService.sendEmail(this.services);
             }
-           
+            this.updateServiceData(service);
           }
           service.status = status;
-          this.updateServiceData(service);
+          //this.updateServiceData(service);
         }
       },
       error => {
@@ -102,7 +103,7 @@ export class AppComponent {
         // if(startTime===null)
         //     startTime=dateTime;
         if (!service) {
-          this.services.push({
+          const serve =   {
             id,
             name,
             url,
@@ -114,20 +115,25 @@ export class AppComponent {
             upTime,
             downTime,
             subscription
-          });
-         
+          };
+          this.services.push(serve);
+          this.updateServiceData(serve);
         } else {
           if (service.status === status) {
             if (service.stopTime) {
+              const lastStopTime = service.downTime;
               service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
+              if(lastStopTime!== service.downTime)
+              this.updateServiceData(service);
             } else {
               service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
               service.stopTime = dateTime.toISOString();
+              this.updateServiceData(service);
             }
             this.serviceDataService.sendEmail(this.services);
          }
           service.status = status;
-          this.updateServiceData(service);
+          //this.updateServiceData(service);
         }
       });
       
