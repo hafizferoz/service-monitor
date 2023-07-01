@@ -90,6 +90,12 @@ export class AppComponent {
               this.serviceDataService.sendEmail(this.services);
             }
             this.updateServiceData(service);
+          } else {
+            if (status === 'UP') {
+              service.upTime = this.getTimeDiff(new Date(service.startTime), dateTime);
+            }else{
+              service.downTime = this.getTimeDiff(new Date(service.startTime), dateTime);
+            }
           }
           service.status = status;
           //this.updateServiceData(service);
